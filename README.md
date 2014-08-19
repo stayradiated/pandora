@@ -8,30 +8,26 @@ Also make sure your profile privacy is set to public.
 
 ## How it works
 
-Get full station list
+It uses the [gopiano](github.com/cellofellow/gopiano) library to connect to
+pandora and download the station list.
 
-    http://www.pandora.com/content/stations?startIndex=0&webname=<USER>
-    
-    USER: your username
-    
-Get around five faves from a station
-    
-    http://www.pandora.com/content/station_track_thumbs?stationId=<STATION_ID>&page=true&posFeedbackStartIndex=<INDEX>&posSortAsc=false&posSortBy=date
-    
-    STATION_ID: id of station
-    INDEX: start at 0 and increment with each call
+It then loops through each station and grabs the songs that have been thumbed
+up.
 
 ## How to use it
 
-    $ pandora USERNAME
+    $ pandora [email] [password]
     
-    $ pandora stayradiated
+    $ pandora stayradiated hunter5
     
-        { "stations": [
-            {   "id": "2212000990023385070",
+        [
+            {
                 "name": "Pink Floyd Radio",
-                "faves": [
-                    ...
+                "songs": [
+                    {
+                        "name": "...",
+                        "artist": "..."
+                    }
                 ]
             }
-        ]}
+        ]
