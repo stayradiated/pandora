@@ -3,7 +3,8 @@ pandora
 
 Export all pandora stations + faves to JSON
 
-To get your username, visit http://www.pandora.com/profile and check the URL
+To get your username, visit http://www.pandora.com/profile and check the URL.
+Also make sure your profile privacy is set to public.
 
 ## How it works
 
@@ -19,3 +20,18 @@ Get around five faves from a station
     
     STATION_ID: id of station
     INDEX: start at 0 and increment with each call
+
+## How to use it
+
+    $ pandora USERNAME
+    
+    $ pandora stayradiated
+    
+        { "stations": [
+            {   "id": "2212000990023385070",
+                "name": "Pink Floyd Radio",
+                "faves": [
+                    ...
+                ]
+            }
+        ]}
