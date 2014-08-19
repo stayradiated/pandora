@@ -22,6 +22,7 @@ type songOutput struct {
 
 // fetchStation fetches full information about a station, specifically the thumbed up songs. It then processes this info and creates a stationOutput instance. This is then passed into the result channel.
 func fetchStation(client *gopiano.Client, stationToken string, result chan<- stationOutput) {
+	// get full station details (including feedback)
 	details, err := client.StationGetStation(stationToken, true)
 	if err != nil {
 		panic(err)
@@ -47,41 +48,49 @@ func fetchStation(client *gopiano.Client, stationToken string, result chan<- sta
 
 // FetchStations connects to pandora using a username/password combo and downloads their entire station list. It then goes through each station and fetches their feedback info.
 func FetchStations(username, password string) ([]stationOutput, error) {
+	// setup a new gopiano client using the android settings
 	client, err := gopiano.NewClient(gopiano.AndroidClient)
 	if err != nil {
 		return nil, err
 	}
 
+	// apparently required before doing a login
 	_, err = client.AuthPartnerLogin()
 	if err != nil {
 		return nil, err
 	}
 
+	// auth the user
 	_, err = client.AuthUserLogin(username, password)
 	if err != nil {
 		return nil, err
 	}
 
+	// get full station list (doesn't include station feedback)
 	stationsList, err := client.UserGetStationList(false)
 	if err != nil {
 		return nil, err
 	}
 
-	output := make([]stationOutput, 0)
+	// alias
 	stations := stationsList.Result.Stations
 
+	output := make([]stationOutput, 0)
 	result := make(chan stationOutput, 2)
 	expectedLength := len(stations)
 
 	for _, station := range stations {
+		// ignore quick mix and shared stations
 		if station.IsQuickMix || station.IsShared {
 			expectedLength -= 1
 			continue
 		}
 
+		// run in parallel as a goroutine
 		go fetchStation(client, station.StationToken, result)
 	}
 
+	// collect responses and assemble into a single slice
 	for {
 		sOutput := <-result
 		output = append(output, sOutput)
