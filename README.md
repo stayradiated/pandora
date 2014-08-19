@@ -21,20 +21,21 @@ printed out as JSON.
 Depending on how many stations you have, it could take a while to run. I have
 around 750 likes over 95 stations and it takes around 3.5 seconds.
 
+    // usage
     $ pandora [email] [password]
     
+    // print to stdout
     $ pandora stayradiated hunter5
-    
-        [
-            {
-                "name": "Pink Floyd Radio",
-                "songs": [
-                    {
-                        "name": "Wish You Were Here",
-                        "artist": "Pink Floyd"
-                    },
-                    ...
-                ]
-            },
-            ...
-        ]
+    [{"name": "Pink Floyd Radio","songs": [{"name": "Wish You Were Here","artist": "Pink Floyd"}]}]
+
+    // pipe output into json formatter
+    $ pandora stayradiated hunter5 | jq -s .
+    [
+        {
+            "name": "Pink Floyd Radio",
+            "songs": {
+                "name": "Wish You Were Here",
+                "artist": "Pink Floyd"
+            }
+        }
+    ]
