@@ -6,28 +6,29 @@ import (
 	"os"
 
 	"github.com/cellofellow/gopiano"
-	"github.com/cellofellow/gopiano/responses"
 )
 
+// stationOutput contains a station name and a slice of songs
 type stationOutput struct {
 	Name  string       `json:name`
 	Songs []songOutput `json:songs`
 }
 
+// songOutput contains a song name and artist
 type songOutput struct {
 	Name   string `json:name`
 	Artist string `json:artist`
 }
 
-func fetchStation(client *gopiano.Client, station responses.Station, result chan<- stationOutput) {
-	details, err := client.StationGetStation(station.StationToken, true)
+// fetchStation fetches full information about a station, specifically the thumbed up songs. It then processes this info and creates a stationOutput instance. This is then passed into the result channel.
+func fetchStation(client *gopiano.Client, stationToken string, result chan<- stationOutput) {
+	details, err := client.StationGetStation(stationToken, true)
 	if err != nil {
 		panic(err)
 	}
 
+	// alias
 	feedback := details.Result.Feedback.ThumbsUp
-
-	fmt.Println(station.StationName, len(feedback))
 
 	sOutput := stationOutput{
 		Name:  details.Result.StationName,
@@ -44,6 +45,7 @@ func fetchStation(client *gopiano.Client, station responses.Station, result chan
 	result <- sOutput
 }
 
+// FetchStations connects to pandora using a username/password combo and downloads their entire station list. It then goes through each station and fetches their feedback info.
 func FetchStations(username, password string) ([]stationOutput, error) {
 	client, err := gopiano.NewClient(gopiano.AndroidClient)
 	if err != nil {
@@ -77,7 +79,7 @@ func FetchStations(username, password string) ([]stationOutput, error) {
 			continue
 		}
 
-		go fetchStation(client, station, result)
+		go fetchStation(client, station.StationToken, result)
 	}
 
 	for {
@@ -91,8 +93,8 @@ func FetchStations(username, password string) ([]stationOutput, error) {
 	return output, nil
 }
 
+// main takes a username and password to fetch the station and feedback info which it will prints out as JSON
 func main() {
-
 	if len(os.Args) < 3 {
 		printHelp()
 		return
@@ -114,6 +116,7 @@ func main() {
 	fmt.Println(string(json))
 }
 
+// printHelp will print help
 func printHelp() {
 	fmt.Println(`Pandora prints out your stations and favorites.
 

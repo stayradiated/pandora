@@ -1,20 +1,25 @@
 pandora
 =======
 
-Export all pandora stations + faves to JSON
+Export all your pandora stations and thumbed up tracks as JSON.
 
-To get your username, visit http://www.pandora.com/profile and check the URL.
-Also make sure your profile privacy is set to public.
+**Important Note:** This does require your username and password for Pandora.
 
 ## How it works
 
-It uses the [gopiano](github.com/cellofellow/gopiano) library to connect to
-pandora and download the station list.
+It uses the [gopiano](//github.com/cellofellow/gopiano) library to connect to
+pandora and download the station list. It then loops through each station and
+fetches the songs that have been thumbed up. This info is then processed and
+printed out as JSON.
 
-It then loops through each station and grabs the songs that have been thumbed
-up.
+## How to install it
+
+    go install github.com/stayradiated/pandora
 
 ## How to use it
+
+Depending on how many stations you have, it could take a while to run. I have
+around 750 likes over 95 stations and it takes around 3.5 seconds.
 
     $ pandora [email] [password]
     
@@ -25,9 +30,11 @@ up.
                 "name": "Pink Floyd Radio",
                 "songs": [
                     {
-                        "name": "...",
-                        "artist": "..."
-                    }
+                        "name": "Wish You Were Here",
+                        "artist": "Pink Floyd"
+                    },
+                    ...
                 ]
-            }
+            },
+            ...
         ]
