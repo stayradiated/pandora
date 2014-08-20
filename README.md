@@ -19,7 +19,7 @@ printed out as JSON.
 ## How to use it
 
 Depending on how many stations you have, it could take a while to run. I have
-around 750 likes over 95 stations and it takes around 3.5 seconds.
+around 750 likes over 95 stations and it takes around 3-5 seconds.
 
     // usage
     $ pandora [email] [password]
