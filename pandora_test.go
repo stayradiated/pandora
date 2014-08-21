@@ -1,4 +1,4 @@
-package main
+package pandora
 
 import (
 	"reflect"
@@ -7,17 +7,17 @@ import (
 	"github.com/cellofellow/gopiano/responses"
 )
 
-var expectedStationOutput = stationOutput{
+var expectedStationOutput = Station{
 	Name: "station",
-	Songs: []songOutput{
-		songOutput{
+	Songs: []Song{
+		Song{
 			Name:   "song",
 			Artist: "artist",
 		},
 	},
 }
 
-var expectedStationListOutput = []stationOutput{
+var expectedStationListOutput = []Station{
 	expectedStationOutput,
 }
 
@@ -36,7 +36,7 @@ func mockStationGetStation(token string, includeFullAttrs bool) (*responses.Stat
 }
 
 func TestFetchStation(t *testing.T) {
-	result := make(chan *stationOutput)
+	result := make(chan *Station)
 	go fetchStation(mockStationGetStation, "id", result)
 
 	output := <-result

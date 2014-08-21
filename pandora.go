@@ -1,30 +1,26 @@
-package main
+package pandora
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-
 	"github.com/cellofellow/gopiano"
 	"github.com/cellofellow/gopiano/responses"
 )
 
-// stationOutput contains a station name and a slice of songs
-type stationOutput struct {
-	Name  string       `json:name`
-	Songs []songOutput `json:songs`
+// Station contains a station name and a slice of songs
+type Station struct {
+	Name  string `json:name`
+	Songs []Song `json:songs`
 }
 
-// songOutput contains a song name and artist
-type songOutput struct {
+// Song contains a song name and artist
+type Song struct {
 	Name   string `json:name`
 	Artist string `json:artist`
 }
 
 type stationGetter func(token string, includeFullAttrs bool) (*responses.StationGetStation, error)
 
-// fetchStation fetches full information about a station, specifically the thumbed up songs. It then processes this info and creates a stationOutput instance. This is then passed into the result channel.
-func fetchStation(getStation stationGetter, stationToken string, result chan<- *stationOutput) {
+// fetchStation fetches full information about a station, specifically the thumbed up songs. It then processes this info and creates a Station instance. This is then passed into the result channel.
+func fetchStation(getStation stationGetter, stationToken string, result chan<- *Station) {
 	// get full station details (including feedback)
 	details, err := getStation(stationToken, true)
 	if err != nil {
@@ -34,13 +30,13 @@ func fetchStation(getStation stationGetter, stationToken string, result chan<- *
 	// alias
 	feedback := details.Result.Feedback.ThumbsUp
 
-	sOutput := stationOutput{
+	sOutput := Station{
 		Name:  details.Result.StationName,
-		Songs: make([]songOutput, len(feedback)),
+		Songs: make([]Song, len(feedback)),
 	}
 
 	for i, song := range feedback {
-		sOutput.Songs[i] = songOutput{
+		sOutput.Songs[i] = Song{
 			Artist: song.ArtistName,
 			Name:   song.SongName,
 		}
@@ -50,9 +46,9 @@ func fetchStation(getStation stationGetter, stationToken string, result chan<- *
 }
 
 // processStations takes a list of stations and fetches the feedback information for each one
-func processStations(getStation stationGetter, stations responses.StationList) []stationOutput {
-	output := make([]stationOutput, 0)
-	result := make(chan *stationOutput, 2)
+func processStations(getStation stationGetter, stations responses.StationList) []Station {
+	output := make([]Station, 0)
+	result := make(chan *Station, 2)
 	expectedLength := len(stations)
 
 	for _, station := range stations {
@@ -79,7 +75,7 @@ func processStations(getStation stationGetter, stations responses.StationList) [
 }
 
 // FetchStations connects to pandora using a username/password combo and downloads their entire station list. It then goes through each station and fetches their feedback info.
-func FetchStations(username, password string) ([]stationOutput, error) {
+func FetchStations(username, password string) ([]Station, error) {
 	// setup a new gopiano client using the android settings
 	client, err := gopiano.NewClient(gopiano.AndroidClient)
 	if err != nil {
@@ -105,36 +101,4 @@ func FetchStations(username, password string) ([]stationOutput, error) {
 	}
 
 	return processStations(client.StationGetStation, stations.Result.Stations), nil
-}
-
-// main takes a username and password to fetch the station and feedback info which it will prints out as JSON
-func main() {
-	if len(os.Args) < 3 {
-		printHelp()
-		return
-	}
-
-	username := os.Args[1]
-	password := os.Args[2]
-
-	output, err := FetchStations(username, password)
-	if err != nil {
-		panic(err)
-	}
-
-	json, err := json.Marshal(output)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(string(json))
-}
-
-// printHelp will print help
-func printHelp() {
-	fmt.Println(`Pandora prints out your stations and favorites.
-
-Usage:
-	pandora [email [password]
-	`)
 }
