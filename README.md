@@ -14,28 +14,10 @@ printed out as JSON.
 
 ## How to install it
 
-    go install github.com/stayradiated/pandora
+```
+go get github.com/stayradiated/pandora
+```
 
 ## How to use it
 
-Depending on how many stations you have, it could take a while to run. I have
-around 750 likes over 95 stations and it takes around 3-5 seconds.
-
-    // usage
-    $ pandora [email] [password]
-    
-    // print to stdout
-    $ pandora stayradiated hunter5
-    [{"name": "Pink Floyd Radio","songs": [{"name": "Wish You Were Here","artist": "Pink Floyd"}]}]
-
-    // pipe output into json formatter
-    $ pandora stayradiated hunter5 | jq -s .
-    [
-        {
-            "name": "Pink Floyd Radio",
-            "songs": {
-                "name": "Wish You Were Here",
-                "artist": "Pink Floyd"
-            }
-        }
-    ]
+Checkout https://github.com/stayradiated/pandora-export for a simple CLI.
