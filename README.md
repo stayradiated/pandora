@@ -1,23 +1,32 @@
-pandora
-=======
+Pandora Export
+==============
 
-Export all your pandora stations and thumbed up tracks as JSON.
+A simple CLI wrapper for https://github.com/stayradiated/pandora.
+Use it to quickly extract a list of your favorite songs from Pandora.
 
-**Important Note:** This does require your username and password for Pandora.
+**Important Note**: This does require you to enter your username and password for Pandora.
 
-## How it works
-
-It uses the [gopiano](//github.com/cellofellow/gopiano) library to connect to
-pandora and download the station list. It then loops through each station and
-fetches the songs that have been thumbed up. This info is then processed and
-printed out as JSON.
-
-## How to install it
+## Install
 
 ```
-go get github.com/stayradiated/pandora
+go install github.com/stayradiated/pandora-export
 ```
 
-## How to use it
+Or download a binary from the 'releases' tab.
 
-Checkout https://github.com/stayradiated/pandora-export for a simple CLI.
+## Usage
+
+Depending on how many stations you have, it could take a while to run. I have
+around 750 likes over 95 stations and it takes around 5-10 seconds.
+
+```
+pandora-export -u [username] -p [password]
+
+// example
+$ pandora-export -u john@smith.com -p hunter2
+Pink Floyd -- Wish You Were Here
+
+// example as json
+$ pandora-export -u john@smith.com -p hunter2 -json
+[{"name": "Pink Floyd Radio","songs": [{"name": "Wish You Were Here","artist": "Pink Floyd"}]}]
+```
