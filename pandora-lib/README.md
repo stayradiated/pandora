@@ -20,4 +20,4 @@ go get github.com/stayradiated/pandora
 
 ## How to use it
 
-Checkout https://github.com/stayradiated/pandora-export for a simple CLI.
+Checkout https://github.com/stayradiated/pandora for a simple CLI.
